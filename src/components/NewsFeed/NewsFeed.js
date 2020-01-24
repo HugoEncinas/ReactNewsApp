@@ -5,8 +5,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Container, Typography } from '@material-ui/core';
 import { actionExample } from '../../redux/actions';
+import Search from '../Search';
 
 function NewsFeed({ prop1, prop2 }) {
+  const [searchValue, setSearchValue] = useState('');
   // eslint-disable-next-line no-unused-vars
   const [state, setState] = useState([]);
 
@@ -35,10 +37,22 @@ function NewsFeed({ prop1, prop2 }) {
     console.log('Property prop2 is set or changed');
   }, [prop2]);
 
+  const searchNewsHandler = event => {
+    console.log(event);
+    if (event.type === 'click' || event.charCode === 13) {
+      const search = document.querySelector('#search');
+      const searchWord = search.value.toLowerCase();
+      search.value = '';
+      setSearchValue(searchWord);
+      console.log(searchValue);
+    }
+  };
+
   return (
     <div>
       <Container maxWidth="sm">
         <Typography variant="h3">News</Typography>
+        <Search searchNewsHandler={searchNewsHandler} />
       </Container>
     </div>
   );
