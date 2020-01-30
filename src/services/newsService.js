@@ -1,0 +1,18 @@
+export default class NewsService {
+  static getNews(searchTerm) {
+    const apiKey = '803fdd9b8517490d89d8c85ade466b8d';
+    const url = `https://newsapi.org/v2/everything?q=${searchTerm}&from=2020-01-30&sortBy=popularity&apiKey=${apiKey}`;
+
+    return fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          return data.articles;
+        }
+        return {};
+      })
+      .catch(err => {
+        return [err];
+      });
+  }
+}

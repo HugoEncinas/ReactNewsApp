@@ -1,6 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField, Grid, Icon } from '@material-ui/core';
+import {
+  TextField,
+  Grid,
+  Icon,
+  FormLabel,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+} from '@material-ui/core';
 
 const Search = ({ searchNewsHandler }) => {
   return (
@@ -16,6 +24,25 @@ const Search = ({ searchNewsHandler }) => {
           onKeyPress={searchNewsHandler}
           margin="normal"
         />
+      </Grid>
+      <Grid item>
+        <FormLabel component="legend" />
+        <RadioGroup
+          defaultValue="keyword"
+          aria-label="searchby"
+          name="customized-radios"
+        >
+          <FormControlLabel
+            value="keyword"
+            control={<Radio color="primary" />}
+            label="keyword"
+          />
+          <FormControlLabel
+            value="phrase"
+            control={<Radio color="primary" />}
+            label="phrase"
+          />
+        </RadioGroup>
       </Grid>
     </Grid>
   );
