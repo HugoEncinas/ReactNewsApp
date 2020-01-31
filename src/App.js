@@ -10,9 +10,8 @@ function App() {
     <Router>
       <div className="app">
         <Switch>
-          <Route exact path="/">
-            <NewsFeed prop1 prop2="property" />
-          </Route>
+          <Route exact path="/" component={NewsFeed} />
+          <Route path="/newsfeed" component={NewsFeed} />
         </Switch>
       </div>
     </Router>

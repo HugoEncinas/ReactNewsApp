@@ -7,6 +7,10 @@ export default class NewsService {
       .then(res => res.json())
       .then(data => {
         if (data.status === 'ok') {
+          data.articles.forEach((element, index) => {
+            // eslint-disable-next-line no-param-reassign
+            element.id = index;
+          });
           return data.articles;
         }
         return {};

@@ -1,20 +1,24 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Card, Grid, Button } from '@material-ui/core';
 import { VisibilityOffOutlined } from '@material-ui/icons';
+import './Article.sass';
 
-function Article({ title, index, hideArticleHandler }) {
-  console.log('title', title);
+// eslint-disable-next-line react/prop-types
+function Article({ title, hideArticleHandler, match, id }) {
   return (
     <Grid item xs={12} sm={6}>
       <Card className="card">
         <div className="news-info">
-          <h2 className="title">{title}</h2>
+          <Link to={`${match.url}/${id}`}>{title}</Link>
           <Button
             size="small"
-            onClick={() => hideArticleHandler(index)}
+            onClick={() => hideArticleHandler(id)}
             variant="contained"
             color="red"
+            className="hide-btn"
           >
             <VisibilityOffOutlined />
           </Button>
@@ -26,13 +30,13 @@ function Article({ title, index, hideArticleHandler }) {
 
 Article.defaultProps = {
   title: '',
-  index: 0,
+  id: 0,
   hideArticleHandler: () => {},
 };
 
 Article.propTypes = {
   title: PropTypes.string,
-  index: PropTypes.number,
+  id: PropTypes.number,
   hideArticleHandler: PropTypes.func,
 };
 

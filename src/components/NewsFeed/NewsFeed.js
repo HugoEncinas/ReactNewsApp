@@ -1,15 +1,19 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 // Component with basic useEffect hooks as example, feel free to copy and rename
 
 import React, { useState, useEffect } from 'react';
 // import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Route } from 'react-router-dom';
 import { Container, Typography, Grid } from '@material-ui/core';
 import { actionExample } from '../../redux/actions';
 import Search from '../Search';
 import Article from '../Article';
+import Fullarticle from '../Fullarticle';
 import NewsService from '../../services/newsService';
 
-function NewsFeed() {
+function NewsFeed({ match }) {
   const [searchValue, setSearchValue] = useState('test');
   // eslint-disable-next-line no-unused-vars
   const [news, setNews] = useState([]);
@@ -49,13 +53,16 @@ function NewsFeed() {
     }
   }, [searchValue]);
 
-  const hideArticleHandler = index => {
-    console.log(index);
+  const hideArticleHandler = id => {
+    const filteredNews = news.filter(element => {
+      return element.id !== id;
+    });
+    setNews(filteredNews);
   };
 
   return (
     <div>
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
         <Typography variant="h3">News</Typography>
         <Search searchNewsHandler={searchNewsHandler} />
         <Grid container spacing={16}>
@@ -65,11 +72,19 @@ function NewsFeed() {
                 title={article.title}
                 index={index}
                 hideArticleHandler={hideArticleHandler}
+                id={article.id}
+                match={match}
               />
             );
           })}
           {news.length === 0 && <p>No news</p>}
         </Grid>
+        <Route
+          path={`${match.url}/:newsId`}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          render={props => <Fullarticle data={news} {...props} />}
+        />
+        <Route exact path={match.url} render={() => <div>News content</div>} />
       </Container>
     </div>
   );
