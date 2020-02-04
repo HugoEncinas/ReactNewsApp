@@ -8,16 +8,17 @@ import './Article.sass';
 
 // eslint-disable-next-line react/prop-types
 function Article({ title, hideArticleHandler, match, id }) {
+  const articleLink = `${match.url === '/' ? 'newsfeed' : match.url}/${id}`;
   return (
-    <Grid item xs={12} sm={6}>
+    <Grid item xs={12}>
       <Card className="card">
         <div className="news-info">
-          <Link to={`${match.url}/${id}`}>{title}</Link>
+          <Link to={articleLink}>{title}</Link>
           <Button
             size="small"
             onClick={() => hideArticleHandler(id)}
             variant="contained"
-            color="red"
+            color="primary"
             className="hide-btn"
           >
             <VisibilityOffOutlined />

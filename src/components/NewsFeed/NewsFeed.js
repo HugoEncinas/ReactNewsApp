@@ -1,36 +1,18 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-// Component with basic useEffect hooks as example, feel free to copy and rename
 
 import React, { useState, useEffect } from 'react';
-// import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Route } from 'react-router-dom';
 import { Container, Typography, Grid } from '@material-ui/core';
-import { actionExample } from '../../redux/actions';
 import Search from '../Search';
 import Article from '../Article';
 import Fullarticle from '../Fullarticle';
 import NewsService from '../../services/newsService';
+import './NewsFeed.sass';
 
 function NewsFeed({ match }) {
-  const [searchValue, setSearchValue] = useState('test');
-  // eslint-disable-next-line no-unused-vars
+  const [searchValue, setSearchValue] = useState('');
   const [news, setNews] = useState([]);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('Component mounted');
-    return () => {
-      // eslint-disable-next-line no-console
-      console.log('Component will unmount');
-    };
-  }, []);
-
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log('Component mounted or updated');
-  });
+  const [countryCode, setCountryCode] = useState('us');
 
   const searchNewsHandler = event => {
     if (event.type === 'click' || event.charCode === 13) {
@@ -38,20 +20,16 @@ function NewsFeed({ match }) {
       const searchWord = search.value.toLowerCase();
       search.value = '';
       setSearchValue(searchWord);
-      console.log(searchValue);
     }
   };
 
-  useEffect(() => {
-    async function searchNews() {
-      const newsFromSearch = await NewsService.getNews(searchValue);
-      console.log('newsFromSearch', newsFromSearch);
-      setNews([...newsFromSearch]);
-    }
-    if (searchValue) {
-      searchNews();
-    }
-  }, [searchValue]);
+  const getTopNewsHandler = () => {
+    return new Promise(() => {
+      NewsService.getNews('', true, countryCode).then(newsFromSearch => {
+        setNews([...newsFromSearch]);
+      });
+    });
+  };
 
   const hideArticleHandler = id => {
     const filteredNews = news.filter(element => {
@@ -60,53 +38,64 @@ function NewsFeed({ match }) {
     setNews(filteredNews);
   };
 
+  const countryHandler = event => {
+    setCountryCode(event.target.value);
+  };
+
+  useEffect(() => {
+    async function searchNews() {
+      const newsFromSearch = await NewsService.getNews(searchValue);
+      setNews([...newsFromSearch]);
+    }
+    if (searchValue) {
+      searchNews();
+    }
+  }, [searchValue]);
+
   return (
     <div>
       <Container maxWidth="md">
-        <Typography variant="h3">News</Typography>
-        <Search searchNewsHandler={searchNewsHandler} />
-        <Grid container spacing={16}>
-          {news.map((article, index) => {
-            return (
-              <Article
-                title={article.title}
-                index={index}
-                hideArticleHandler={hideArticleHandler}
-                id={article.id}
-                match={match}
-              />
-            );
-          })}
-          {news.length === 0 && <p>No news</p>}
-        </Grid>
-        <Route
-          path={`${match.url}/:newsId`}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          render={props => <Fullarticle data={news} {...props} />}
+        <Typography className="title" variant="h3">
+          News
+        </Typography>
+        <Search
+          searchNewsHandler={searchNewsHandler}
+          getTopNewsHandler={getTopNewsHandler}
+          countryHandler={countryHandler}
+          countryCode={countryCode}
         />
-        <Route exact path={match.url} render={() => <div>News content</div>} />
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={6}>
+            {news.map((article, index) => {
+              return (
+                <Article
+                  key={article.id}
+                  title={article.title}
+                  index={index}
+                  hideArticleHandler={hideArticleHandler}
+                  id={article.id}
+                  match={match}
+                />
+              );
+            })}
+            {news.length === 0 && <p>No news</p>}
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Route
+              path={`${match.url}/:newsId`}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              render={props => <Fullarticle data={news} {...props} />}
+            />
+            <Route
+              exact
+              path={match.url}
+              render={() => <div>News content</div>}
+            />
+          </Grid>
+        </Grid>
       </Container>
     </div>
   );
 }
 
-// NewsFeed.defaultProps = {
-//   prop2: '',
-// };
-
-// NewsFeed.propTypes = {
-//   prop1: PropTypes.bool.isRequired,
-//   prop2: PropTypes.string,
-// };
-
-const mapStateToProps = state => {
-  return {
-    stateOption1: state.reducerExample.stateOption1,
-  };
-};
-
-// eslint-disable-next-line prettier/prettier
-export default connect(
-  mapStateToProps,
-  { actionExample }
-)(NewsFeed);
+export default NewsFeed;
